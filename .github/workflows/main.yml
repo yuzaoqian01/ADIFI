@@ -1,6 +1,5 @@
 name: Build and Deploy
 
-# 触发条件：仅在推送到 master 分支时运行
 on:
   push:
     branches:
@@ -11,29 +10,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 检出代码
       - uses: actions/checkout@v4
 
-      # 设置 Node.js 环境并安装依赖
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'  # 可根据需要修改 Node.js 版本
+          node-version: '20'
+
       - run: npm install
 
-      # 运行构建命令，生成 dist 文件夹
+      # 构建项目
       - run: npm run build
+
+      # 在 GitHub Actions 中动态修改 dist 文件中 HTML 内的静态资源路径
+      - name: Fix asset paths
+        run: |
+          find dist -name "*.html" -exec sed -i 's|/assets/|./assets/|g' {} +
 
       # 将构建后的 dist 文件夹发布到 GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist  # 指定发布目录
+          publish_dir: ./dist
+          force_orphan: true
 
-      # 生成 dist 文件夹中 HTML 文件的 URL
       - name: Generate URLs
         run: |
           echo "Deployment complete! The files are available at:"
+          REPO_NAME=$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)
+          USER_NAME=$(echo $GITHUB_REPOSITORY | cut -d'/' -f1)
           for file in $(find dist -name '*.html'); do
-            echo "https://<USERNAME>.github.io/<REPO>/${file#dist/}"
+            echo "https://${USER_NAME}.github.io/${REPO_NAME}/${file#dist/}"
           done
