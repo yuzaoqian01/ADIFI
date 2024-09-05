@@ -1,0 +1,44 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - run: npm install
+
+      # 构建项目
+      - run: npm run build
+
+      # 在 GitHub Actions 中动态修改 dist 文件中 HTML 内的静态资源路径
+      - name: Fix asset paths
+        run: |
+          find dist -name "*.html" -exec sed -i 's|/assets/|./assets/|g' {} +
+
+      # 将构建后的 dist 文件夹发布到 GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          force_orphan: true
+
+      - name: Generate URLs
+        run: |
+          echo "Deployment complete! The files are available at:"
+          REPO_NAME=$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)
+          USER_NAME=$(echo $GITHUB_REPOSITORY | cut -d'/' -f1)
+          for file in $(find dist -name '*.html'); do
+            echo "https://${USER_NAME}.github.io/${REPO_NAME}/${file#dist/}"
+          done
