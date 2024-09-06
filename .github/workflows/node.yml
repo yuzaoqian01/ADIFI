@@ -8,9 +8,6 @@ jobs:
     steps:
     - name: checkout
       uses: actions/checkout@v4
-    - name: 启用 pages
-      id: pages
-      uses: actions/configure-pages@v4
     - name: use-node
       uses: actions/setup-node@v4
       with:
