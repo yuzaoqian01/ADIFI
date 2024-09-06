@@ -1,45 +1,31 @@
-name: github-pages
-run-name: github-pages-deploy
-on: [push]
+name: Deploy to GitHub Pages
 
-permissions:
-  id-token: write  # 确保 GITHUB_TOKEN 拥有 id-token 的写权限
-  contents: read   # 确保 GITHUB_TOKEN 拥有内容的读取权限
-  pages: write  # 为 GitHub Pages 设置写入权限
+on:
+  push:
+    branches:
+      - master  # 这里指的是你想要发布的分支，通常为 main 或 master
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    steps:
-    - name: checkout
-      uses: actions/checkout@v4
-    - name: use-node
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-    - run: yarn
-    - run: yarn build
 
-    - name: jekyll 构建
-      uses: actions/jekyll-build-pages@v1
-      with:
-         source: ./dist/
-    - name: Upload artifact
-      uses: actions/upload-pages-artifact@v2
-
-  # Deployment job
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{steps.deployment.outputs.page_url}}
-    runs-on: ubuntu-latest
-    needs: build
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'  # 使用你项目所需的 Node.js 版本
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Build project
+        run: yarn build  # 使用你的打包命令，默认是 `npm run build`
+
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
-
-
-
-
-
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist  # Vite 默认打包输出文件夹
