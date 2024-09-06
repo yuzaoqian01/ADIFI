@@ -1,6 +1,8 @@
 name: 学习github actions
 run-name: ${{ github.actor }} actions
-on: [push]
+on:
+  push:
+   branches: [main]
 jobs:
   test-on-node:
      runs-on: ubuntu-latest
