@@ -15,7 +15,7 @@ jobs:
        path: math-homework.txt
 
   job_2:
-    name: 除以9
+    name: 乘以9
     needs: job_1
     runs-on: windows-latest
     steps:
