@@ -1,4 +1,4 @@
-name: test
+name: build and deploy v1
 
 # 触发条件：仅在推送到 master 分支时运行
 on:
