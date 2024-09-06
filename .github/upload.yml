@@ -1,0 +1,50 @@
+name: 分享数据作业
+on: [push]
+jobs:
+  job_1:
+   name: 做计算3+7
+   runs-on: ubuntu-latest
+   steps:
+    - shell: bash
+      run: |
+        expr 3 + 7 > math-homework.txt
+    - name: 上传结果
+      uses: actions/upload-artifacts@v4
+      with:
+       name: homework_pre
+       path: math-homework.txt
+
+  job_2:
+    name: 除以9
+    needs: job_1
+    runs-on: windows-latest
+    steps:
+      - name: 下载文件job_1
+        uses: actions/download-artifact@v4
+          with:
+          name: homework_pre
+      - shell: bash
+        run: |
+          value=`cat math-homework.txt`
+          expr $value \* 9 > math-homework.txt
+      - name: 上传任务job_2
+        uses: actions/download-artifact@v4
+        with:
+          name: homework_final
+          path: math-homework.txt
+
+  job_3:
+      name: 展示结果
+      needs: job_2
+      runs-on: macOS-latest
+      steps:
+        - name: 下载job_2
+          uses: actions/download-artifact@v4
+          with:
+            name: homework_final
+        - name: 打印
+          shell: bash
+          run: |
+            value=`cat math-homework.txt`
+            echo result is $value
+
