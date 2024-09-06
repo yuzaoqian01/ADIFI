@@ -5,6 +5,7 @@ on: [push]
 permissions:
   id-token: write  # 确保 GITHUB_TOKEN 拥有 id-token 的写权限
   contents: read   # 确保 GITHUB_TOKEN 拥有内容的读取权限
+  pages: write  # 为 GitHub Pages 设置写入权限
 
 jobs:
   build:
