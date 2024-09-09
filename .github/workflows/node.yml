@@ -24,8 +24,9 @@ jobs:
       - name: Build project
         run: yarn build  # 使用你的打包命令，默认是 `npm run build`
 
-      - name: Deploy to GitHub Pages
+      - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
+        if: github.ref == 'refs/heads/main'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist  # Vite 默认打包输出文件夹
+          publish_dir: ./public
