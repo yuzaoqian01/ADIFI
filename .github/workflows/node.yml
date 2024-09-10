@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write  # 确保有写权限
+      pages: write    # 写入 GitHub Pages 的权限
       id-token: write
 
     steps:
