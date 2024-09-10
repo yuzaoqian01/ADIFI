@@ -27,5 +27,13 @@ jobs:
       - name: Build project
         run: yarn build  # 使用项目的打包命令，默认是 `npm run build`
 
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: github-pages
+          path: ./dist  # 替换为你的构建输出路径
+
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4 # 确保使用最新的版本
+        with:
+          path: ./dist
