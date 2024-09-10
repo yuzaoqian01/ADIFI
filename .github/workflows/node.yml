@@ -50,8 +50,8 @@ jobs:
         id: create_release  # 设置步骤 ID 以便后续引用
         uses: actions/create-release@v1  # 创建 GitHub Release
         with:
-          tag_name: ${{ github.sha }}  # 使用当前 commit 的 SHA 作为 tag 名称
-          release_name: "Release ${{ github.sha }}"  # 设置发布名称
+          tag_name: ${{ env.TAG_NAME }}  # 使用当前 commit 的 SHA 作为 tag 名称
+          release_name: "Release ${{ env.TAG_NAME }}"  # 设置发布名称
           body: "This is an automated release containing the latest build."  # 发布描述
           draft: false  # 设为 false 表示创建正式发布
           prerelease: false  # 设为 false 表示这不是预发布
