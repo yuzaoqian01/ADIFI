@@ -36,5 +36,3 @@ jobs:
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4 # 确保使用最新的版本
-        with:
-          path: ./dist
