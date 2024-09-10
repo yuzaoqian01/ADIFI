@@ -24,9 +24,35 @@ jobs:
       - name: Build project
         run: yarn build  # 使用你的打包命令，默认是 `npm run build`
 
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
-        if: github.ref == 'refs/heads/main'
+      - name: 上传dist
+        run: |
+          echo ::group::Archive dist directory
+          tar -czvf dist.tar.gz dist  # 将 dist 目录打包为 dist.tar.gz
+          echo ::endgroup::
+
+      - name: Upload dist artifact
+        uses: actions/upload-artifact@v4  # 上传打包好的 dist 目录
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          name: dist-artifact
+          path: dist.tar.gz  # 上传打包文件
+          retention-days: 1  # 工件保留 1 天
+
+      - name: Create GitHub Release
+        id: create_release  # 设置步骤 ID 以便后续引用
+        uses: actions/create-release@v1  # 创建 GitHub Release
+        with:
+          tag_name: ${{ github.sha }}  # 使用当前 commit 的 SHA 作为 tag 名称
+          release_name: "Release ${{ github.sha }}"  # 设置发布名称
+          body: "This is an automated release containing the latest build."  # 发布描述
+          draft: false  # 设为 false 表示创建正式发布
+          prerelease: false  # 设为 false 表示这不是预发布
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 需要 GitHub 提供的 token 用于身份验证
+
+      - name: Upload dist to Release
+        uses: actions/upload-release-asset@v1  # 上传打包文件到 GitHub Release
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}  # 获取上一步创建发布的上传 URL
+          asset_path: dist.tar.gz  # 上传的文件路径
+          asset_name: dist.tar.gz  # 文件在 Release 中显示的名称
+          asset_content_type: application/gzip  # 文件类型
