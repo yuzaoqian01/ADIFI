@@ -39,6 +39,13 @@ jobs:
           path: dist.tar.gz  # 上传打包文件
           retention-days: 1  # 工件保留 1 天
 
+      # 创建新的 tag（例如基于时间或其他命名规则）
+      - name: Create tag
+        id: tag_step
+        run: |
+          TAG_NAME="v$(date +'%Y%m%d%H%M%S')"  # 根据当前时间生成 tag
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV  # 将 tag 名称存储到环境变量
+
       - name: Create GitHub Release
         id: create_release  # 设置步骤 ID 以便后续引用
         uses: actions/create-release@v1  # 创建 GitHub Release
