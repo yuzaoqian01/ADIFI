@@ -34,7 +34,13 @@ jobs:
           name: github-pages
           path: ./dist  # 替换为你的构建输出路径
 
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: github-pages
+
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4 # 确保使用最新的版本
         with:
           source: './dist'
+          folder: ./github-pages
