@@ -3,14 +3,14 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - master  # 指定发布的分支，通常为 main 或 master
+      - master  # 确认你的发布分支是否正确
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # 确保有写权限
-      pages: write    # 写入 GitHub Pages 的权限
+      contents: write
+      pages: write
       id-token: write
 
     steps:
@@ -20,19 +20,19 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'  # 使用项目所需的 Node.js 版本
+          node-version: '20'
 
       - name: Install dependencies
-        run: yarn install  # 使用 yarn install 安装依赖
+        run: yarn install
 
       - name: Build project
-        run: yarn build  # 使用项目的打包命令，默认是 `npm run build`
+        run: yarn build
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: github-pages
-          path: ./dist  # 替换为你的构建输出路径
+          name: github-pages  # 确保工件名称唯一
+          path: ./dist
 
       - name: Download artifact
         uses: actions/download-artifact@v4
@@ -40,4 +40,4 @@ jobs:
           name: github-pages
 
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4 # 确保使用最新的版本
+        uses: actions/deploy-pages@v4
