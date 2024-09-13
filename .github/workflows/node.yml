@@ -27,18 +27,17 @@ jobs:
 
       - name: Build project
         run: yarn build
-             ls ./dist
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: github-pages  # 确保工件名称唯一
-          path: ./dist
+          name: github-pages  # 工件名称唯一
+          path: ./dist  # 将 dist 目录上传
 
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: github-pages
+          name: github-pages  # 下载之前上传的工件
 
       - name: List downloaded files
         run: ls -R
@@ -46,4 +45,4 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
         with:
-          path: ./github-pages
+          path: ./dist  # 确保此处是正确的文件路径
